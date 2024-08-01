@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawing app</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <canvas id="myCanvas" style="display: inline-block;"></canvas><canvas id="helperCanvas" style="display: inline-block;"></canvas>
+    <div id="toolBox">       
+        <select onchange="changeTool(this.value)">
+            <option value="path" selected>Path</option>
+            <option value="rect">Rect</option>
+            <option value="select">Select</option>
+        </select>
+
+        <div>
+            <div>
+                <input type="color" name="fillColor" oninput="changeFillColor(this.value)" value="#f00000" id="fillColor">
+                <input type="checkbox" onchange="changeFill(this.checked)" name="fill" id="fill">
+            </div>
+            <div>
+                <input type="color" value="#000000" oninput="changeStrokeColor(this.value)" title="Stroke color"  id="strokeColor">
+                <input type="checkbox" id="stroke" onchange="changeStroke(this.checked)" title="Stroke" checked>
+            </div>
+            <div>
+                <input type="range" value="3" min="1" id="strokeWidth" oninput="changeStrokeWidth(this.value)">
+            </div>
+            <div id="properties">
+                <div>
+                    X: <input type="number" id="x" title="x" oninput="changeX(this.value)">
+                </div>
+                <div>
+                    Y:<input type="number" id="y" title="y" oninput="changeY(this.value)">
+                </div>
+                <div>
+                    W:<input type="number" id="width" title="Width" oninput="changeWidth(this.value)">
+                </div>
+                <div>
+                    H:<input type="number"  id="height" title="Height" oninput="changeHeight(this.value)">
+                </div>
+            </div>
+            <div>
+                <button onclick="save()">Save</button>
+                <button onclick="load()">Load</button>
+                <button onclick="undo()">Undo</button>
+            </div>
+        </div>
+    </div>
+    <script src="shapes/utils.js"></script>
+    <script src="shapes/toolsEvents.js"></script>
+    <script src="shapes/shape.js"></script>
+    <script src="shapes/path.js"></script>
+    <script src="shapes/rect.js"></script>
+    <script src="script.js"></script>
+    <script src="shapes/vector.js"></script>
+   
+</body>
+</html>

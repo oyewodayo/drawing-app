@@ -1,0 +1,126 @@
+class Rect extends Shape{
+    constructor(corner1,options){
+        super(options);
+        this.corner1 = corner1;
+        this.corner2 = corner1;
+    }
+
+    static load(data, stageProperties){
+        const rect = new Rect();
+        rect.id = data.id;
+        rect.options = JSON.parse(JSON.stringify(data.options));
+        rect.center = Vector.load(data.center);
+        rect.center.x += stageProperties.left;
+        rect.center.y += stageProperties.top;
+        rect.size = data.size;
+        rect.selected = data.selected;
+        return rect;
+    }
+
+    serialize(stageProperties){
+        return {
+            type: "Rect",
+            id:this.id,
+            options: this.options,
+            center: new Vector(
+                this.center.x -stageProperties.left,
+                this.center.y - stageProperties.top
+            ),
+            size: this.size,
+            selected:this.selected
+        }
+    }
+
+    setCorner2(corner2){
+        this.corner2 = corner2;
+    }
+
+    getPoints(){
+        if (this.size) {
+            return [
+                new Vector(- this.size.width / 2, - this.size.height/2),
+                new Vector(- this.size.width / 2, this.size.height/2),
+                new Vector(this.size.width / 2, this.size.height/2),
+                new Vector(this.size.width / 2, - this.size.height/2),
+            ]
+        }else{
+
+            return [this.corner1, this.corner2];
+        }
+    }
+
+    //Accepts an array argument
+    setPoints(points){
+        // this.corner1 = points[0];
+        // this.corner2 = points[1];
+    }
+
+    setWidth(width){
+        this.size.width = width;
+    }
+
+    setHeight(height){
+        this.size.height = height;
+    }
+
+    draw(ctx, hitRegion = false){
+        const center = this.center?this.center:{x:0, y:0};
+        let left, top, width, height;
+        if (this.size) {
+            left = center.x - this.size.width/2;
+            top = center.y - this.size.height/2;
+            width = this.size.width;
+            height = this.size.height;
+        }else{
+            const minX = Math.min(this.corner1.x, this.corner2.x);
+            const minY = Math.min(this.corner1.y, this.corner2.y);
+            width = Math.abs(this.corner1.x - this.corner2.x);
+            height = Math.abs(this.corner1.y - this.corner2.y);
+            left = minX + center.x;
+            top = minY + center.y;
+        }
+        
+        ctx.beginPath();
+        ctx.rect(left, top, width, height);
+        if (hitRegion) {
+            this.applyHitRegionStyles(ctx)
+        }else{
+            
+            this.applyStyles(ctx);
+
+            if (this.selected) {
+                this.drawGizmo(ctx)
+            }
+        }
+        
+    }
+
+    static downCallbackForRect(e){
+        const mousePosition = new Vector(e.offsetX,e.offsetY);
+        currentShape= new Rect(mousePosition, getOptions()); 
+    
+        const moveCallback = (e)=>{
+            const mousePosition = new Vector(e.offsetX, e.offsetY);
+           currentShape.setCorner2(mousePosition); 
+            
+            clearCanvas();
+            drawShapes([...shapes,currentShape]);
+            // updateHistory(shapes);
+        }
+    
+        const upCallback = (e)=>{
+            myCanvas.removeEventListener('pointermove',moveCallback)
+            myCanvas.removeEventListener('pointerup',upCallback)
+    
+            currentShape.recenter();
+            shapes.push(currentShape);
+            
+            updateHistory(shapes)
+        }
+        
+        myCanvas.addEventListener('pointermove',moveCallback)
+        myCanvas.addEventListener('pointerup',upCallback)
+    }
+    
+
+}

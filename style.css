@@ -1,0 +1,22 @@
+body{
+    margin: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+canvas{
+    background-color: white;
+    display: block;
+    margin: 0 auto;
+}
+
+#toolBox{
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 5px;
+    color: black;
+}
+
+input[type="number"]{
+    width: 60px;
+}
